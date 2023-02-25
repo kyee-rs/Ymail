@@ -92,7 +92,7 @@ $ ngrok http 3000
 - Open Receiving tab and create a new route. Set this settings:
 ```diff
 + Expression type: Catch All
-+ Forward: <your-webhook-url>/receive
++ Forward: <your-webhook-url>/receive?secret=SECRET_KEY_FROM_ENV
 + Priority: 0
 ```
 

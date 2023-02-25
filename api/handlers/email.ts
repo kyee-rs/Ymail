@@ -3,6 +3,13 @@ import { bot } from '../core/bot.ts';
 import { Account, WrappedQuery } from '../types/bot.d.ts';
 import { db } from './database.ts';
 export const messageListener = new Router().post('/receive', async (ctx) => {
+    const secretkey = ctx.request.url.searchParams.get('secret');
+    if (secretkey !== Deno.env.get('SECRET_KEY')) {
+        ctx.response.status = 401;
+        ctx.response.body = 'Unauthorized';
+        return;
+    }
+    
     const bodytype = ctx.request.body().type;
     if (bodytype === 'form') {
         const body = await ctx.request.body({ type: 'form' }).value;
