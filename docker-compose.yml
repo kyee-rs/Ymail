@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+    bot:
+        container_name: groombot-main
+        build: .
+        ports:
+          - 7000:7000
+        depends_on:
+            - surrealdb
+        env_file:
+            - .env
+        restart: unless-stopped
+    # Database
+    surrealdb:
+        container_name: groombot-surrealdb
+        image: surrealdb/surrealdb:latest
+        volumes:
+            - surrealdata:/data
+        env_file:
+            - .env
+        command: start
+        restart: unless-stopped
+        networks:
+            default:
+                aliases:
+                    - surldb
+
+volumes:
+    surrealdata:
+networks:
+    default:

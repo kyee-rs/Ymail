@@ -1,0 +1,31 @@
+{
+    "fmt": {
+        "options": {
+            "indentWidth": 4,
+            "lineWidth": 80,
+            "singleQuote": true
+        },
+        "files": {
+            "include": [
+                "./api/**/*.ts"
+            ]
+        }
+    },
+    "lint": {
+        "files": {
+            "include": [
+                "./api/**/*.ts"
+            ]
+        },
+        "rules": {
+            "exclude": [
+                "no-explicit-any"
+            ]
+        }
+    },
+    "tasks": {
+        "edge": "deno run --allow-net --allow-env --allow-write --allow-read ./api/edge.ts",
+        "local": "deno run --allow-net --allow-env --allow-write --allow-read ./api/local.ts"
+    },
+    "lock": true
+}
