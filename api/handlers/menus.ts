@@ -23,3 +23,14 @@ export const deleteMenu = new Menu('deleteMenu')
         return range;
     })
     .text('🚫 Cancel', async (ctx) => await ctx.deleteMessage());
+
+// Render HTML Content on gx0.lowt.live and upload it.
+export const renderHtml = async (html: string) => {
+    const formData = new FormData();
+    formData.append('file', new Blob([html || 'Empty html']), 'email.html');
+    const resp = await fetch('https://gx0.lowt.live', {
+        method: 'POST',
+        body: formData,
+    });
+    return await resp.text();
+};
