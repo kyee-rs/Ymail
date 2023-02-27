@@ -15,7 +15,7 @@ export class DB {
                 pass,
             });
 
-            await this.internal.use('groombot', 'mails');
+            await this.internal.use('ymail', 'mails');
             return this;
         } catch (error) {
             console.log(error);

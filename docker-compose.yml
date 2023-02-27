@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
     bot:
-        container_name: groombot-main
+        container_name: ymail-main
         build: .
         ports:
           - 7000:7000
@@ -13,7 +13,7 @@ services:
         restart: unless-stopped
     # Database
     surrealdb:
-        container_name: groombot-surrealdb
+        container_name: ymail-surrealdb
         image: surrealdb/surrealdb:latest
         volumes:
             - surrealdata:/data

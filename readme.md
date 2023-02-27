@@ -1,4 +1,4 @@
-# Groombot - Temporary Email Service in your smartphone. 📬
+# YmailBot - Temporary Email Service in your smartphone. 📬
 
 ## Contents
  - [Introduction](#introduction)
@@ -11,11 +11,11 @@
 
 ## Introduction
 ----------------
-### What is Groombot?
-GroomBot is a user-friendly telegram bot that lets you create temporary email addresses and receive emails on your smartphone for free. Its open source design allows you to receive emails from any website or service requiring email verification, as well as from friends and family. The bot helps safeguard your privacy and keep your email address secure by preventing spamming and hacking attempts.
+### What is YmailBot?
+Ymail is a user-friendly telegram bot that lets you create temporary email addresses and receive emails on your smartphone for free. Its open source design allows you to receive emails from any website or service requiring email verification, as well as from friends and family. The bot helps safeguard your privacy and keep your email address secure by preventing spamming and hacking attempts.
 
-### Why Groombot?
-GroomBot is a free, open source, and user-friendly temporary email service that allows you to receive emails on your smartphone. It is a great alternative to other temporary email services that require you to sign up for an account and provide your personal information. GroomBot is a great way to protect your privacy and keep your email address secure. There is also an ability to connect your own domain to the bot to prevent service from being blocked by some websites.
+### Why YmailBot?
+YmailBot is a free, open source, and user-friendly temporary email service that allows you to receive emails on your smartphone. It is a great alternative to other temporary email services that require you to sign up for an account and provide your personal information. Ymail is a great way to protect your privacy and keep your email address secure. There is also an ability to connect your own domain to the bot to prevent service from being blocked by some websites.
 
 
 ## Features
