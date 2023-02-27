@@ -88,7 +88,7 @@ commands.command('list', async (ctx) => {
     });
 });
 
-commands.command('deleteAll', async (ctx) => {
+commands.command('deleteall', async (ctx) => {
     await db.change(`account:${ctx.chat?.id}`, {
         emails: [
             `${ctx.chat?.id}`,
