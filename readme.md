@@ -35,7 +35,7 @@ You can connect your own domain to the bot to prevent service from being blocked
 ### Requirements
  - [Deno](https://deno.land/) runtime or [Docker Compose](https://docs.docker.com/compose/)
  - Custom domain
- - SurrealDB Instance or [Docker Compose](https://docs.docker.com/compose/)
+ - [SurrealDB](https://surrealdb.com) Instance or [Docker Compose](https://docs.docker.com/compose/)
  - [Mailgun](https://www.mailgun.com/) account
 
 ### Setup
@@ -81,7 +81,7 @@ $ deno task edge
 ### Network Setup
 - Set up a webhook integration in your bot's settings. You can use [ngrok](https://ngrok.com/) to expose your local server to the internet.
 ```bash
-$ ngrok http 3000
+$ ngrok http 7000
 ```
 - Set up a webhook integration in your bot's settings. Use the URL provided by ngrok as the webhook URL.
 ```jsonc
