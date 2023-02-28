@@ -13,6 +13,6 @@ RUN deno cache deps.deno.ts
 # These steps will be re-run upon each file change in your working directory:
 ADD . .
 # Compile the main app so that it doesn't need to be compiled each startup/entry.
-RUN deno cache api/edge.ts
+RUN deno cache api/edge.ts --lock=deno.lock --lock-write
 
 CMD ["task", "edge"]

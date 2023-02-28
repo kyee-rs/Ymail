@@ -42,8 +42,8 @@ You can connect your own domain to the bot to prevent service from being blocked
 Using Docker Compose:
 - Clone the repository and navigate to the project directory.
 ```bash
-$ git clone https://github.com/voxelin/groom.git
-$ cd groom
+$ git clone https://github.com/voxelin/Ymail.git
+$ cd Ymail
 ```
 - Rename `.env.example` to `.env` and fill in the required fields.
 ```bash
@@ -59,8 +59,8 @@ $ docker-compose up -d
 Using Deno:
 - Clone the repository and navigate to the project directory.
 ```bash
-$ git clone https://github.com/voxelin/groom.git
-$ cd groom
+$ git clone https://github.com/voxelin/Ymail.git
+$ cd Ymail
 ```
 - Rename `.env.example` to `.env` and fill in the required fields.
 ```bash
