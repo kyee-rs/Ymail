@@ -27,7 +27,7 @@ export const messageListener = new Router().post('/receive', async (ctx) => {
                     bot.api.sendMessage(
                         chat[0].result[0].id.split(':')[1],
                         `To: ${r}\nFrom: ${body.get('From')?.split('<')[1].slice(0, -1)
-                        }\nSubject: ${body.get('subject') || 'No subject'}\n\n${body.get('body-plain').replace(/\s+/g, " ").trim() || 'No message body'
+                        }\nSubject: ${body.get('subject') || 'No subject'}\n\n${(body.get('body-plain') || 'No message body').replace(/\s+/g, " ").trim().substring(0, 2000 - 3) + "..."
                         }\n\n🚀 Rendered email: ${await renderHtml(
                             body.get('body-html') || 'No message body',
                         )}`,
@@ -54,7 +54,7 @@ export const messageListener = new Router().post('/receive', async (ctx) => {
                     await bot.api.sendMessage(
                         chat[0].result[0].id.split(':')[1],
                         `To: ${r}\nFrom: ${fields['From']?.split('<')[1].slice(0, -1)
-                        }\nSubject: ${fields.subject || 'No subject'}\n\n${fields['body-plain'].replace(/\s+/g, " ").trim() || 'No message body'
+                        }\nSubject: ${fields.subject || 'No subject'}\n\n${(fields['body-plain'] || 'No message body').replace(/\s+/g, " ").trim().substring(0, 2000 - 3) + "..."
                         }\n\n🚀 Rendered email: ${await renderHtml(
                             fields['body-html'] || 'No message body',
                         )}`,
