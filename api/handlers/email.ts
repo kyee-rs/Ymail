@@ -4,6 +4,14 @@ import { Account, WrappedQuery } from '../types/bot.d.ts';
 import { db } from './database.ts';
 import { renderHtml } from './menus.ts';
 
+const normalize = (s: string) => {
+    s = s.replace(/\s+/g, " ").trim()
+    if (s > 2000) {
+        s = s.substring(0, 2000) + "..."
+    }
+    return s;
+} 
+
 export const messageListener = new Router().post('/receive', async (ctx) => {
     const secret = ctx.request.url.searchParams.get('secret');
     if (secret !== Deno.env.get('SECRET_KEY')) {
@@ -27,7 +35,7 @@ export const messageListener = new Router().post('/receive', async (ctx) => {
                     bot.api.sendMessage(
                         chat[0].result[0].id.split(':')[1],
                         `To: ${r}\nFrom: ${body.get('From')?.split('<')[1].slice(0, -1)
-                        }\nSubject: ${body.get('subject') || 'No subject'}\n\n${(body.get('body-plain') || 'No message body').replace(/\s+/g, " ").trim().substring(0, 2000 - 3) + "..."
+                        }\nSubject: ${body.get('subject') || 'No subject'}\n\n${normalize(body.get('body-plain') || 'No message body')
                         }\n\n🚀 Rendered email: ${await renderHtml(
                             body.get('body-html') || 'No message body',
                         )}`,
@@ -54,7 +62,7 @@ export const messageListener = new Router().post('/receive', async (ctx) => {
                     await bot.api.sendMessage(
                         chat[0].result[0].id.split(':')[1],
                         `To: ${r}\nFrom: ${fields['From']?.split('<')[1].slice(0, -1)
-                        }\nSubject: ${fields.subject || 'No subject'}\n\n${(fields['body-plain'] || 'No message body').replace(/\s+/g, " ").trim().substring(0, 2000 - 3) + "..."
+                        }\nSubject: ${fields.subject || 'No subject'}\n\n${normalize(fields['body-plain'] || 'No message body')
                         }\n\n🚀 Rendered email: ${await renderHtml(
                             fields['body-html'] || 'No message body',
                         )}`,
