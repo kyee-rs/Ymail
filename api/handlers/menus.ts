@@ -28,7 +28,7 @@ export const deleteMenu = new Menu('deleteMenu')
 export const renderHtml = async (html: string) => {
     const formData = new FormData();
     formData.append('file', new Blob([html || 'Empty html']), 'email.html');
-    const resp = await fetch('https://gx0.lowt.live', {
+    const resp = await fetch('https://html.lowt.live', {
         method: 'POST',
         body: formData,
     });
