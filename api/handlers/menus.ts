@@ -27,8 +27,8 @@ export const deleteMenu = new Menu('deleteMenu')
 // Render HTML Content on gx0.lowt.live and upload it.
 export const renderHtml = async (html: string) => {
     const formData = new FormData();
-    formData.append('file', new Blob([html || 'Empty html']), 'email.html');
-    const resp = await fetch('https://html.lowt.live', {
+    formData.append('file', new Blob([html || 'No message body. Try again later.']), 'email.html');
+    const resp = await fetch('https://cdn.lowt.live', {
         method: 'POST',
         body: formData,
     });

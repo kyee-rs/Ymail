@@ -10,7 +10,7 @@ const normalize = (s: string) => {
         s = s.substring(0, 2000) + "..."
     }
     return s;
-} 
+}
 
 export const messageListener = new Router().post('/receive', async (ctx) => {
     const secret = ctx.request.url.searchParams.get('secret');
@@ -35,9 +35,9 @@ export const messageListener = new Router().post('/receive', async (ctx) => {
                     bot.api.sendMessage(
                         chat[0].result[0].id.split(':')[1],
                         `To: ${r}\nFrom: ${body.get('From')?.split('<')[1].slice(0, -1)
-                        }\nSubject: ${body.get('subject') || 'No subject'}\n\n${normalize(body.get('body-plain') || 'No message body')
+                        }\nSubject: ${body.get('subject') || 'No subject'}\n\n${normalize(body.get('stripped-text') || 'No message body')
                         }\n\n🚀 Rendered email: ${await renderHtml(
-                            body.get('body-html') || 'No message body',
+                            body.get('stripped-html') || 'No message body',
                         )}`,
                         { disable_web_page_preview: true },
                     );
@@ -62,9 +62,9 @@ export const messageListener = new Router().post('/receive', async (ctx) => {
                     await bot.api.sendMessage(
                         chat[0].result[0].id.split(':')[1],
                         `To: ${r}\nFrom: ${fields['From']?.split('<')[1].slice(0, -1)
-                        }\nSubject: ${fields.subject || 'No subject'}\n\n${normalize(fields['body-plain'] || 'No message body')
+                        }\nSubject: ${fields.subject || 'No subject'}\n\n${normalize(fields['stripped-text'] || 'No message body')
                         }\n\n🚀 Rendered email: ${await renderHtml(
-                            fields['body-html'] || 'No message body',
+                            fields['stripped-html'] || 'No message body',
                         )}`,
                         { disable_web_page_preview: true },
                     );

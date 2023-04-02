@@ -14,7 +14,7 @@ services:
     # Database
     surrealdb:
         container_name: ymail-surrealdb
-        image: surrealdb/surrealdb:latest
+        image: surrealdb/surrealdb:1.0.0-beta.8
         volumes:
             - surrealdata:/data
         env_file:
