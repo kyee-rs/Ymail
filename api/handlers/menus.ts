@@ -31,6 +31,10 @@ export const renderHtml = async (html: string) => {
     const resp = await fetch('https://cdn.lowt.live', {
         method: 'POST',
         body: formData,
+        headers: {
+            "Parse_HTML": "yes",
+            "Accept": "application/json"
+        }
     });
-    return await resp.text();
+    return await resp.json();
 };
