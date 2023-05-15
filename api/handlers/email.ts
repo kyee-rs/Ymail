@@ -6,7 +6,7 @@ import { renderHtml } from './menus.ts';
 
 const normalize = (s: string) => {
     s = s.replace(/\s+/g, " ").trim()
-    if (s > 2000) {
+    if (s.length > 2000) {
         s = s.substring(0, 2000) + "..."
     }
     return s;
