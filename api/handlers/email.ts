@@ -5,12 +5,12 @@ import { db } from './database.ts';
 import { renderHtml } from './menus.ts';
 
 const normalize = (s: string) => {
-    s = s.replace(/\s+/g, " ").trim()
+    s = s.replace(/\s+/g, ' ').trim();
     if (s.length > 2000) {
-        s = s.substring(0, 2000) + "..."
+        s = s.substring(0, 2000) + '...';
     }
     return s;
-}
+};
 
 export const messageListener = new Router().post('/receive', async (ctx) => {
     const secret = ctx.request.url.searchParams.get('secret');
@@ -26,7 +26,9 @@ export const messageListener = new Router().post('/receive', async (ctx) => {
 
         recipient?.forEach(async (r) => {
             const chat: WrappedQuery<Account> = await db.internal.query(
-                `SELECT id, forward FROM account WHERE emails CONTAINS "${r.split('@')[0]}";`,
+                `SELECT id, forward FROM account WHERE emails CONTAINS "${
+                    r.split('@')[0]
+                }";`,
             );
             if (chat[0].result[0] == undefined) return;
 
@@ -34,8 +36,12 @@ export const messageListener = new Router().post('/receive', async (ctx) => {
                 try {
                     bot.api.sendMessage(
                         chat[0].result[0].id.split(':')[1],
-                        `To: ${r}\nFrom: ${body.get('From')?.split('<')[1].slice(0, -1)
-                        }\nSubject: ${body.get('subject') || 'No subject'}\n\n${normalize(body.get('stripped-text') || 'No message body')
+                        `To: ${r}\nFrom: ${
+                            body.get('From')?.split('<')[1].slice(0, -1)
+                        }\nSubject: ${body.get('subject') || 'No subject'}\n\n${
+                            normalize(
+                                body.get('stripped-text') || 'No message body',
+                            )
                         }\n\n🚀 Rendered email: ${await renderHtml(
                             body.get('stripped-html') || 'No message body',
                         )}`,
@@ -53,7 +59,9 @@ export const messageListener = new Router().post('/receive', async (ctx) => {
         const recipient = fields.recipient.split(',');
         recipient?.forEach(async (r) => {
             const chat: WrappedQuery<Account> = await db.internal.query(
-                `SELECT id, forward FROM account WHERE emails CONTAINS "${r.split('@')[0]}";`,
+                `SELECT id, forward FROM account WHERE emails CONTAINS "${
+                    r.split('@')[0]
+                }";`,
             );
             if (chat[0].result[0] == undefined) return;
 
@@ -61,8 +69,12 @@ export const messageListener = new Router().post('/receive', async (ctx) => {
                 try {
                     await bot.api.sendMessage(
                         chat[0].result[0].id.split(':')[1],
-                        `To: ${r}\nFrom: ${fields['From']?.split('<')[1].slice(0, -1)
-                        }\nSubject: ${fields.subject || 'No subject'}\n\n${normalize(fields['stripped-text'] || 'No message body')
+                        `To: ${r}\nFrom: ${
+                            fields['From']?.split('<')[1].slice(0, -1)
+                        }\nSubject: ${fields.subject || 'No subject'}\n\n${
+                            normalize(
+                                fields['stripped-text'] || 'No message body',
+                            )
                         }\n\n🚀 Rendered email: ${await renderHtml(
                             fields['stripped-html'] || 'No message body',
                         )}`,

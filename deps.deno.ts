@@ -27,4 +27,5 @@ export {
     type RouterContext,
 } from 'https://deno.land/x/oak@v11.1.0/mod.ts';
 export * as Surreal from 'https://deno.land/x/surrealdb@v0.5.0/mod.ts';
+export { sweetid } from 'https://deno.land/x/sweetid@0.11.1/mod.ts';
 export { autoRetry } from 'https://esm.sh/@grammyjs/auto-retry@1.1.1';

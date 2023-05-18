@@ -24,16 +24,20 @@ export const deleteMenu = new Menu('deleteMenu')
     })
     .text('🚫 Cancel', async (ctx) => await ctx.deleteMessage());
 
-// Render HTML Content on gx0.lowt.live and upload it.
+// Render HTML Content on cdn.lowt.live and upload it.
 export const renderHtml = async (html: string) => {
     const formData = new FormData();
-    formData.append('file', new Blob([html || 'No message body. Try again later.']), 'email.html');
+    formData.append(
+        'file',
+        new Blob([html || 'No message body. Try again later.']),
+        'email.html',
+    );
     const resp = await fetch('https://cdn.lowt.live', {
         method: 'POST',
         body: formData,
         headers: {
-            "Parse_HTML": "yes",
-        }
+            'Parse_HTML': 'yes',
+        },
     });
     return await resp.text();
 };

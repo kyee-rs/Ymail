@@ -1,22 +1,17 @@
 {
     "fmt": {
-        "options": {
-            "indentWidth": 4,
-            "lineWidth": 80,
-            "singleQuote": true
-        },
-        "files": {
-            "include": [
-                "./api/**/*.ts"
-            ]
-        }
+        "indentWidth": 4,
+        "lineWidth": 80,
+        "singleQuote": true,
+        "include": [
+            "./api/**/*.ts",
+            "./deps.deno.ts"
+        ]
     },
     "lint": {
-        "files": {
-            "include": [
-                "./api/**/*.ts"
-            ]
-        },
+        "include": [
+            "./api/**/*.ts"
+        ],
         "rules": {
             "exclude": [
                 "no-explicit-any"
@@ -27,5 +22,5 @@
         "edge": "deno run --allow-net --allow-env --allow-write --allow-read ./api/edge.ts",
         "local": "deno run --allow-net --allow-env --allow-write --allow-read ./api/local.ts"
     },
-    "lock": true
+    "lock": false
 }

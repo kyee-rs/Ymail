@@ -1,3 +1,4 @@
+import { sweetid } from 'https://deno.land/x/sweetid@0.11.1/src/main.ts';
 import { Composer } from '../../deps.deno.ts';
 import { db } from '../handlers/database.ts';
 import { deleteMenu } from '../handlers/menus.ts';
@@ -13,7 +14,9 @@ commands.use(async (ctx, next) => {
                 emails: [`${ctx.chat?.id}`],
                 forward: true,
             });
-        } catch {}
+        } catch {
+            null;
+        }
         await next();
     } else {
         return;
@@ -62,8 +65,21 @@ commands.command('new', async (ctx) => {
                 '❌ You have reached the maximum number of random emails.',
             );
         } else {
-            const randomEmail = Math.random().toString(36).substring(2, 15) +
-                Math.random().toString(36).substring(2, 15);
+            const randomEmail = sweetid('m');
+            // Check if email exists
+            const emailExists = await db.internal.query<[{ result: [] }]>(
+                `SELECT id FROM account WHERE emails CONTAINS "${randomEmail}";`,
+            );
+            console.info(emailExists);
+            console.info(emailExists.length);
+            console.info(randomEmail);
+            if (emailExists[0].result?.length > 0) {
+                await ctx.reply(
+                    '❌ An error occurred while generating the email address. Please try again.',
+                );
+                return;
+            }
+
             await db.change(`account:${ctx.chat?.id}`, {
                 emails: [...account.emails, randomEmail],
             });
