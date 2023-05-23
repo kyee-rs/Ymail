@@ -59,49 +59,44 @@ commands.command('help', async (ctx) => {
 });
 
 commands.command('new', async (ctx) => {
-    await db.first(`account:${ctx.chat?.id}`).then(async (account) => {
-        if (account.emails.length >= 6) {
-            await ctx.reply(
-                '❌ You have reached the maximum number of random emails.',
-            );
-        } else {
-            const randomEmail = sweetid('m');
-            // Check if email exists
-            const emailExists = await db.internal.query<[{ result: [] }]>(
-                `SELECT id FROM account WHERE emails CONTAINS "${randomEmail}";`,
-            );
-            console.info(emailExists);
-            console.info(emailExists.length);
-            console.info(randomEmail);
-            if (emailExists[0].result?.length > 0) {
-                await ctx.reply(
-                    '❌ An error occurred while generating the email address. Please try again.',
-                );
-                return;
-            }
+    const account: Account = await db.select(`account:${ctx.chat?.id}`);
+    if (account.emails.length >= 6) {
+        await ctx.reply(
+            '❌ You have reached the maximum number of random emails.',
+        );
+    } else {
+        const randomEmail = sweetid('m');
+        const emailExists = await db.query<any>(
+            `SELECT id FROM account WHERE emails CONTAINS "${randomEmail}";`,
+        );
 
-            await db.change(`account:${ctx.chat?.id}`, {
-                emails: [...account.emails, randomEmail],
-            });
+        if (emailExists[0].result?.length > 0) {
             await ctx.reply(
-                `✅ New email address generated: ${randomEmail}@${
-                    Deno.env.get('EMAIL_DOMAIN') || 'decline.live'
-                }`,
+                '❌ An error occurred while generating the email address. Please try again.',
             );
+            return;
         }
-    });
+
+        await db.change(`account:${ctx.chat?.id}`, {
+            emails: [...account.emails, randomEmail],
+        });
+        await ctx.reply(
+            `✅ New email address generated: ${randomEmail}@${
+                Deno.env.get('EMAIL_DOMAIN') || 'decline.live'
+            }`,
+        );
+    }
 });
 
 commands.command('list', async (ctx) => {
-    await db.first(`account:${ctx.chat?.id}`).then(async (account: Account) => {
-        await ctx.reply(
-            `✅ Your emails:\n${
-                account.emails.map((email: string) =>
-                    `${email}@${Deno.env.get('EMAIL_DOMAIN') || 'decline.live'}`
-                ).join('\n')
-            }`,
-        );
-    });
+    const account: Account = await db.select(`account:${ctx.chat?.id}`);
+    await ctx.reply(
+        `✅ Your emails:\n${
+            account.emails.map((email: string) =>
+                `${email}@${Deno.env.get('EMAIL_DOMAIN') || 'decline.live'}`
+            ).join('\n')
+        }`,
+    );
 });
 
 commands.command('deleteall', async (ctx) => {
@@ -114,26 +109,25 @@ commands.command('deleteall', async (ctx) => {
 });
 
 commands.command('forward', async (ctx) => {
-    await db.first(`account:${ctx.chat?.id}`).then(async (account) => {
-        await db.change(`account:${ctx.chat?.id}`, {
-            forward: !account.forward,
-        });
-        await ctx.reply(
-            `✅ Email forwarding ${account.forward ? 'disabled' : 'enabled'}.`,
-        );
+    const account: Account = await db.select(`account:${ctx.chat?.id}`);
+    await db.change(`account:${ctx.chat?.id}`, {
+        forward: !account.forward,
     });
+    await ctx.reply(
+        `✅ Email forwarding ${account.forward ? 'disabled' : 'enabled'}.`,
+    );
 });
 
 commands.command('delete', async (ctx) => {
-    await db.first(`account:${ctx.chat?.id}`).then(async (account) => {
-        if (account.emails.length <= 1) {
-            await ctx.reply(
-                '❌ You cannot delete your persistent email address.',
-            );
-        } else {
-            await ctx.reply('Select the email address you want to delete.', {
-                reply_markup: deleteMenu,
-            });
-        }
-    });
+    const account: Account = await db.select(`account:${ctx.chat?.id}`);
+
+    if (account.emails.length <= 1) {
+        await ctx.reply(
+            '❌ You cannot delete your persistent email address.',
+        );
+    } else {
+        await ctx.reply('Select the email address you want to delete.', {
+            reply_markup: deleteMenu,
+        });
+    }
 });

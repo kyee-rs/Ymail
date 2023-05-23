@@ -1,21 +1,26 @@
 import { Menu, MenuRange } from '../../deps.deno.ts';
+import { Account } from '../types/bot.d.ts';
 import { db } from './database.ts';
 export const deleteMenu = new Menu('deleteMenu')
     .dynamic(async (ctx) => {
-        const emails = (await db.select(`account:${ctx.chat?.id}`))[0].emails;
+        const account: Account = await db.select(`account:${ctx.chat?.id}`);
         const range = new MenuRange();
-        for (const email of emails) {
+        for (const email of account.emails) {
             if (email !== `${ctx.chat?.id}`) {
                 range
                     .text(email, async (ctx) => {
                         await ctx.reply(
                             `☑️ Pattern \`${email}\` deleted successfully.`,
+                            { parse_mode: 'Markdown' },
                         );
-                        await db.change(`account:${ctx.chat?.id}`, {
-                            emails: emails.filter(
-                                (e) => e !== email,
-                            ),
-                        });
+                        await db.change<Account, { emails: string[] }, string>(
+                            `account:${ctx.chat?.id}`,
+                            {
+                                emails: account.emails.filter(
+                                    (e) => e !== email,
+                                ),
+                            },
+                        );
                     })
                     .row();
             }

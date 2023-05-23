@@ -5,7 +5,11 @@ import { messageListener } from './handlers/email.ts';
 await bot.api.deleteWebhook();
 
 console.log(`🦄 Initialized as @${bot.botInfo.username}`);
-const runner = run(bot, 300, {});
+const runner = run(bot, {
+    sink: {
+        concurrency: 300,
+    },
+});
 await new Application()
     .use(messageListener.routes())
     .listen({ port: parseInt(Deno.env.get('PORT')!) || 7000 });

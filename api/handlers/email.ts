@@ -1,6 +1,6 @@
 import { InputFile, Router } from '../../deps.deno.ts';
 import { bot } from '../core/bot.ts';
-import { Account, WrappedQuery } from '../types/bot.d.ts';
+import { Account } from '../types/bot.d.ts';
 import { db } from './database.ts';
 import { renderHtml } from './menus.ts';
 
@@ -25,17 +25,17 @@ export const messageListener = new Router().post('/receive', async (ctx) => {
         const recipient = body.get('recipient')?.split(',');
 
         recipient?.forEach(async (r) => {
-            const chat: WrappedQuery<Account> = await db.internal.query(
+            const chat = await db.query<Account[]>(
                 `SELECT id, forward FROM account WHERE emails CONTAINS "${
                     r.split('@')[0]
                 }";`,
             );
-            if (chat[0].result[0] == undefined) return;
+            if (chat[0].result == undefined) return;
 
-            if (chat[0].result[0].forward == true) {
+            if (chat[0].result?.forward == true) {
                 try {
                     bot.api.sendMessage(
-                        chat[0].result[0].id.split(':')[1],
+                        chat[0].result?.id.split(':')[1],
                         `To: ${r}\nFrom: ${
                             body.get('From')?.split('<')[1].slice(0, -1)
                         }\nSubject: ${body.get('subject') || 'No subject'}\n\n${
@@ -58,17 +58,17 @@ export const messageListener = new Router().post('/receive', async (ctx) => {
         const files = body.files;
         const recipient = fields.recipient.split(',');
         recipient?.forEach(async (r) => {
-            const chat: WrappedQuery<Account> = await db.internal.query(
+            const chat = await db.query<Account[]>(
                 `SELECT id, forward FROM account WHERE emails CONTAINS "${
                     r.split('@')[0]
                 }";`,
             );
-            if (chat[0].result[0] == undefined) return;
+            if (chat[0].result == undefined) return;
 
-            if (chat[0].result[0].forward == true) {
+            if (chat[0].result.forward == true) {
                 try {
                     await bot.api.sendMessage(
-                        chat[0].result[0].id.split(':')[1],
+                        chat[0].result.id.split(':')[1],
                         `To: ${r}\nFrom: ${
                             fields['From']?.split('<')[1].slice(0, -1)
                         }\nSubject: ${fields.subject || 'No subject'}\n\n${
@@ -83,7 +83,7 @@ export const messageListener = new Router().post('/receive', async (ctx) => {
                     files?.forEach(async (f) => {
                         const file = await Deno.readFile(f.filename!);
                         bot.api.sendDocument(
-                            chat[0].result[0].id.split(':')[1],
+                            chat[0].result?.id!,
                             new InputFile(file, f.originalName),
                         );
                     });

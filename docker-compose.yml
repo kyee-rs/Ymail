@@ -5,16 +5,16 @@ services:
         container_name: ymail-main
         build: .
         ports:
-          - 7000:7000
+            - 7000:7000
         depends_on:
             - surrealdb
         env_file:
             - .env
         restart: unless-stopped
-    # Database
+        
     surrealdb:
         container_name: ymail-surrealdb
-        image: surrealdb/surrealdb:1.0.0-beta.8
+        image: surrealdb/surrealdb:1.0.0-beta.9
         volumes:
             - surrealdata:/data
         env_file:
