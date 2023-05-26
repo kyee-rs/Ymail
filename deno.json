@@ -1,7 +1,7 @@
 {
     "fmt": {
         "indentWidth": 4,
-        "lineWidth": 80,
+        "lineWidth": 74,
         "singleQuote": true,
         "include": [
             "./api/**/*.ts",

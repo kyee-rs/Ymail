@@ -1,4 +1,3 @@
-import { sweetid } from 'https://deno.land/x/sweetid@0.11.1/src/main.ts';
 import { Composer } from '../../deps.deno.ts';
 import { db } from '../handlers/database.ts';
 import { deleteMenu } from '../handlers/menus.ts';
@@ -29,7 +28,8 @@ commands.use(async (ctx, next) => {
 
 commands.command('start', async (ctx) => {
     await ctx.reply(
-        'Hello, I am a Temporary Email Bot. I can generate one persistent email address for this chat and unlimited random emails that forward to it. You can use this email address to sign up for websites and services that require email verification. I will forward all emails to this chat. You can also use /help to get more information.',
+        '✅ Welcome to [Ymail](https://github.com/voxelin/Ymail)! This bot is a temporary email service. You can use it to create random email addresses that will forward emails to your Telegram account.\nUse /help to get started.',
+        { parse_mode: 'Markdown' },
     );
     await ctx.reply(
         `Your persistent email address is: ${ctx.chat.id}@${
@@ -60,17 +60,23 @@ commands.command('help', async (ctx) => {
 
 commands.command('new', async (ctx) => {
     const account: Account = await db.select(`account:${ctx.chat?.id}`);
-    if (account.emails.length >= 6) {
+    if (account.emails.length >= 100) {
         await ctx.reply(
-            '❌ You have reached the maximum number of random emails.',
+            '❌ You have reached the maximum number of random emails. (100)',
         );
     } else {
-        const randomEmail = sweetid('m');
-        const emailExists = await db.query<any>(
-            `SELECT id FROM account WHERE emails CONTAINS "${randomEmail}";`,
-        );
+        const randomEmail =
+            (await db.query<[string[]]>(`SELECT * FROM rand::guid(12);`))[
+                0
+            ].result as string[];
 
-        if (emailExists[0].result?.length > 0) {
+        const emailExists = (await db.query<[{ id: string }[]]>(
+            `SELECT id FROM account WHERE emails CONTAINS "${
+                randomEmail[0]
+            }";`,
+        ))[0].result as { id: string }[];
+
+        if (emailExists.length > 0) {
             await ctx.reply(
                 '❌ An error occurred while generating the email address. Please try again.',
             );
@@ -78,10 +84,10 @@ commands.command('new', async (ctx) => {
         }
 
         await db.change(`account:${ctx.chat?.id}`, {
-            emails: [...account.emails, randomEmail],
+            emails: [...account.emails, randomEmail[0]],
         });
         await ctx.reply(
-            `✅ New email address generated: ${randomEmail}@${
+            `✅ New email address generated: ${randomEmail[0]}@${
                 Deno.env.get('EMAIL_DOMAIN') || 'decline.live'
             }`,
         );
@@ -93,7 +99,9 @@ commands.command('list', async (ctx) => {
     await ctx.reply(
         `✅ Your emails:\n${
             account.emails.map((email: string) =>
-                `${email}@${Deno.env.get('EMAIL_DOMAIN') || 'decline.live'}`
+                `${email}@${
+                    Deno.env.get('EMAIL_DOMAIN') || 'decline.live'
+                }`
             ).join('\n')
         }`,
     );
@@ -114,7 +122,9 @@ commands.command('forward', async (ctx) => {
         forward: !account.forward,
     });
     await ctx.reply(
-        `✅ Email forwarding ${account.forward ? 'disabled' : 'enabled'}.`,
+        `✅ Email forwarding ${
+            account.forward ? 'disabled' : 'enabled'
+        }.`,
     );
 });
 

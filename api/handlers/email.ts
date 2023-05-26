@@ -4,7 +4,7 @@ import { Account } from '../types/bot.d.ts';
 import { db } from './database.ts';
 import { renderHtml } from './menus.ts';
 
-const normalize = (s: string) => {
+const n = (s: string) => {
     s = s.replace(/\s+/g, ' ').trim();
     if (s.length > 2000) {
         s = s.substring(0, 2000) + '...';
@@ -12,88 +12,126 @@ const normalize = (s: string) => {
     return s;
 };
 
-export const messageListener = new Router().post('/receive', async (ctx) => {
-    const secret = ctx.request.url.searchParams.get('secret');
-    if (secret !== Deno.env.get('SECRET_KEY')) {
-        ctx.response.status = 401;
-        ctx.response.body = 'Unauthorized';
-        return;
-    }
-    const bodyType = ctx.request.body().type;
-    if (bodyType === 'form') {
-        const body = await ctx.request.body({ type: 'form' }).value;
-        const recipient = body.get('recipient')?.split(',');
+export const messageListener = new Router().post(
+    '/receive',
+    async (ctx) => {
+        // Check if the secret key is valid
+        const secret = ctx.request.url.searchParams.get('secret');
+        if (secret !== Deno.env.get('SECRET_KEY')) {
+            ctx.response.status = 401;
+            ctx.response.body = 'Unauthorized';
+            return;
+        }
 
-        recipient?.forEach(async (r) => {
-            const chat = await db.query<Account[]>(
-                `SELECT id, forward FROM account WHERE emails CONTAINS "${
-                    r.split('@')[0]
-                }";`,
-            );
-            if (chat[0].result == undefined) return;
+        // Get the type of the request body
+        const bodyType = ctx.request.body().type;
 
-            if (chat[0].result?.forward == true) {
-                try {
-                    bot.api.sendMessage(
-                        chat[0].result?.id.split(':')[1],
-                        `To: ${r}\nFrom: ${
-                            body.get('From')?.split('<')[1].slice(0, -1)
-                        }\nSubject: ${body.get('subject') || 'No subject'}\n\n${
-                            normalize(
-                                body.get('stripped-text') || 'No message body',
-                            )
-                        }\n\n🚀 Rendered email: ${await renderHtml(
-                            body.get('stripped-html') || 'No message body',
-                        )}`,
-                        { disable_web_page_preview: true },
-                    );
-                } catch {
+        // Handle form-encoded bodies
+        if (bodyType === 'form') {
+            const body = await ctx.request.body({ type: 'form' }).value;
+
+            // Get the recipients
+            const recipients = body.get('recipient')?.split(',');
+
+            // Iterate over each recipient
+            recipients?.forEach(async (recipient) => {
+                // Get the account associated with this recipient
+                const result: Account[] = (await db.query<[Account[]]>(
+                    `SELECT id, forward FROM account WHERE string::lowercase(string::join(",", emails) CONTAINS string::lowercase("${
+                        recipient.split('@')[0]
+                    }"))`,
+                ))[0].result as Account[];
+
+                // If no account was found, return early
+                if (result.length == 0) {
                     return;
                 }
-            }
-        });
-    } else if (bodyType === 'form-data') {
-        const body = await ctx.request.body({ type: 'form-data' }).value.read();
-        const fields = body.fields;
-        const files = body.files;
-        const recipient = fields.recipient.split(',');
-        recipient?.forEach(async (r) => {
-            const chat = await db.query<Account[]>(
-                `SELECT id, forward FROM account WHERE emails CONTAINS "${
-                    r.split('@')[0]
-                }";`,
-            );
-            if (chat[0].result == undefined) return;
 
-            if (chat[0].result.forward == true) {
-                try {
-                    await bot.api.sendMessage(
-                        chat[0].result.id.split(':')[1],
-                        `To: ${r}\nFrom: ${
-                            fields['From']?.split('<')[1].slice(0, -1)
-                        }\nSubject: ${fields.subject || 'No subject'}\n\n${
-                            normalize(
-                                fields['stripped-text'] || 'No message body',
-                            )
-                        }\n\n🚀 Rendered email: ${await renderHtml(
-                            fields['stripped-html'] || 'No message body',
-                        )}`,
-                        { disable_web_page_preview: true },
-                    );
-                    files?.forEach(async (f) => {
-                        const file = await Deno.readFile(f.filename!);
-                        bot.api.sendDocument(
-                            chat[0].result?.id!,
-                            new InputFile(file, f.originalName),
+                // If the account has forwarding enabled
+                if (result[0].forward == true) {
+                    // Send the message to the user
+                    try {
+                        bot.api.sendMessage(
+                            result[0].id.split(':')[1],
+                            `To: ${recipient}\nFrom: ${
+                                body.get('From')?.split('<')[1].slice(
+                                    0,
+                                    -1,
+                                )
+                            }\nSubject: ${
+                                body.get('subject') || 'No subject'
+                            }\n\n${
+                                n(
+                                    body.get('stripped-text') ||
+                                        'No message body',
+                                )
+                            }\n\n🚀 Rendered email: ${await renderHtml(
+                                body.get('stripped-html') ||
+                                    'No message body',
+                            )}`,
+                            { disable_web_page_preview: true },
                         );
-                    });
-                } catch {
+                    } catch {
+                        return;
+                    }
+                }
+            });
+        } else if (bodyType === 'form-data') {
+            const body = await ctx.request.body({ type: 'form-data' })
+                .value.read();
+            const fields = body.fields;
+            const files = body.files;
+            const recipients = fields.recipient.split(',');
+
+            // Split recipient emails into array and iterate through each one
+            recipients?.forEach(async (recipient) => {
+                // Query database for account with email address matching recipient
+                const result: Account[] = (await db.query<[Account[]]>(
+                    `SELECT id, forward FROM account WHERE string::lowercase(string::join(",", emails) CONTAINS string::lowercase("${
+                        recipient.split('@')[0]
+                    }"))`,
+                ))[0].result as Account[];
+
+                // If there is no result, return
+                if (result.length == 0) {
                     return;
                 }
-            }
-        });
-    }
 
-    ctx.response.status = 200;
-    ctx.response.body = 'OK';
-});
+                // If account is configured to forward email, send it to the bot
+                if (result[0].forward == true) {
+                    try {
+                        await bot.api.sendMessage(
+                            result[0].id.split(':')[1],
+                            `To: ${recipient}\nFrom: ${
+                                fields['From']?.split('<')[1].slice(0, -1)
+                            }\nSubject: ${
+                                fields.subject || 'No subject'
+                            }\n\n${
+                                n(
+                                    fields['stripped-text'] ||
+                                        'No message body',
+                                )
+                            }\n\n🚀 Rendered email: ${await renderHtml(
+                                fields['stripped-html'] ||
+                                    'No message body',
+                            )}`,
+                            { disable_web_page_preview: true },
+                        );
+                        files?.forEach(async (f) => {
+                            const file = await Deno.readFile(f.filename!);
+                            bot.api.sendDocument(
+                                result[0].id,
+                                new InputFile(file, f.originalName),
+                            );
+                        });
+                    } catch {
+                        return;
+                    }
+                }
+            });
+        }
+
+        ctx.response.status = 200;
+        ctx.response.body = 'OK';
+    },
+);

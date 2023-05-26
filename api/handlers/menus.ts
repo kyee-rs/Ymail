@@ -3,7 +3,9 @@ import { Account } from '../types/bot.d.ts';
 import { db } from './database.ts';
 export const deleteMenu = new Menu('deleteMenu')
     .dynamic(async (ctx) => {
-        const account: Account = await db.select(`account:${ctx.chat?.id}`);
+        const account: Account = await db.select(
+            `account:${ctx.chat?.id}`,
+        );
         const range = new MenuRange();
         for (const email of account.emails) {
             if (email !== `${ctx.chat?.id}`) {
@@ -13,7 +15,11 @@ export const deleteMenu = new Menu('deleteMenu')
                             `☑️ Pattern \`${email}\` deleted successfully.`,
                             { parse_mode: 'Markdown' },
                         );
-                        await db.change<Account, { emails: string[] }, string>(
+                        await db.change<
+                            Account,
+                            { emails: string[] },
+                            string
+                        >(
                             `account:${ctx.chat?.id}`,
                             {
                                 emails: account.emails.filter(
