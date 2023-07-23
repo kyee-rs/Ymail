@@ -1,5 +1,7 @@
 # YmailBot - Temporary Email Service in your smartphone. 📬
 
+> ## ⚠️ Deprecated. Use [AtomicEmails/AtomicEmails](https://github.com/AtomicEmails/AtomicEmails) instead.
+
 ## Contents
 
 - [Introduction](#introduction)
@@ -17,7 +19,7 @@
 ### What is YmailBot?
 
 Ymail is a user-friendly telegram bot that lets you create temporary email
-addresses and receive emails on your smartphone for free. Its open source design
+addresses and receive emails on your smartphone for free. It's open source design
 allows you to receive emails from any website or service requiring email
 verification, as well as from friends and family. The bot helps safeguard your
 privacy and keep your email address secure by preventing spamming and hacking
@@ -61,10 +63,10 @@ follow the instructions in the [Installation](#installation) section.
 ### Requirements
 
 - [Deno](https://deno.land/) runtime or
-  [Docker Compose](https://docs.docker.com/compose/)
+  [Docker Compose](https://docs.docker.com/compose/)
 - Custom domain
 - [SurrealDB](https://surrealdb.com) Instance or
-  [Docker Compose](https://docs.docker.com/compose/)
+  [Docker Compose](https://docs.docker.com/compose/)
 - [Mailgun](https://www.mailgun.com/) account
 
 ### Setup
@@ -125,14 +127,14 @@ $ deno task edge
 ### Network Setup
 
 - Set up a webhook integration in your bot's settings. You can use
-  [ngrok](https://ngrok.com/) to expose your local server to the internet.
+  [ngrok](https://ngrok.com/) to expose your local server to the internet.
 
 ```bash
 $ ngrok http 7000
 ```
 
 - Set up a webhook integration in your bot's settings. Use the URL provided by
-  ngrok as the webhook URL.
+  ngrok as the webhook URL.
 
 ```jsonc
 // Navigate to https://api.telegram.org/bot<your-bot-token>/setWebhook?url=<your-webhook-url>/bot/<your-bot-token>. You should receive a response like this:
@@ -140,8 +142,8 @@ $ ngrok http 7000
 ```
 
 - Login to your mailgun account and add your custom domain. Follow the
-  instructions on the mailgun website to verify your domain.
-- Open Receiving tab and create a new route. Set this settings:
+  instructions on the mailgun website to verify your domain.
+- Open Receiving tab and create a new route. Set these settings:
 
 ```diff
 + Expression type: Catch All
@@ -185,11 +187,11 @@ This project is licensed under the GNU General Public License - see the
 
 - [voxelin 🇺🇦](https://github.com/voxelin) - The creator of this project.
 - [SurrealDB](https://surrealdb.com/) - A simple, fast, and secure database that
-  I personally love.
+  I personally love.
 - [Mailgun](https://www.mailgun.com/) - A simple service for sending and
-  receiving emails.
+  receiving emails.
 - [Deno](https://deno.land/) - A secure runtime for JavaScript and TypeScript.
 - [Docker](https://www.docker.com/) - A great tool for containerizing
-  applications.
+  applications.
 - [ngrok](https://ngrok.com/) - An easy way for exposing local servers to the
-  internet.
+  internet.
